@@ -1,32 +1,85 @@
+
 # Prompter: Extensible LLM Provider System
 
 Prompter is a flexible, plugin-style Python framework for working with multiple Large Language Model (LLM) providers. It supports dynamic provider loading, robust error handling, and unified response parsing, making it easy to integrate, extend, and use in any open source or production environment.
 
+## Purpose
+Prompter aims to make prompt engineering and LLM integration easy, robust, and provider-agnostic. It lets you:
+- Build prompts using templates or code
+- Swap LLM providers with a single line change
+- Get structured, type-safe responses from any provider
+- Focus on your application logic, not SDK quirks
+
 ## Features
-- **Plugin-style LLM providers**: Easily add or swap providers (OpenAI, Cohere, Anthropic, etc.)
+- **Plugin-style LLM providers**: Easily add or swap providers (OpenAI, Cohere, Anthropic, local, etc.)
 - **Optional SDKs**: Only install what you need; clear errors if a provider's SDK is missing
 - **Unified response handling**: Consistent, type-safe output from all providers
 - **Prompting flexibility**: Use prompt templates or build prompts programmatically
 - **Extensible and testable**: Add new providers or prompt strategies with minimal code
 
-## Concepts
+## How to Build Prompts
 
-### 1. Prompt Creation
-- **Template File Way**: Define prompts in external template files (e.g., Jinja2, plain text) and load them at runtime. This enables easy prompt management and reuse.
-- **Programmatic Way**: Build prompts dynamically in code using string formatting, f-strings, or other logic. This is useful for advanced or highly dynamic use cases.
+### 1. Using Template Files
+Define prompts in external files (e.g., plain text, Jinja2) and load them at runtime. This enables easy prompt management and reuse.
 
-### 2. Service Providers
-- Each provider (OpenAI, Cohere, Anthropic, etc.) is a class with a unified `generate` method.
-- Providers are loaded dynamically and only require their SDK if used.
-- All providers support structured output via a `result_object` parameter, enabling type-safe parsing of LLM responses.
+**Example:**
 
-## Usage Example
+_File: `prompter/templates/qa/qa.prompt`_
+```
+Background:
+{{context}}
+Question: {{question}}
+Answer:
+```
+
+_Python usage:_
 ```python
-from prompter.providers import OpenAIService
+from prompter.prompt_template_processor import PromptTemplateProcessor
 
+template = PromptTemplateProcessor("qa/qa.prompt")
+prompt = template.render(context="France is a country in Europe.", question="What is the capital of France?")
+```
+
+### 2. Programmatic Prompt Building
+Build prompts dynamically in code using f-strings or other logic. Useful for advanced or highly dynamic use cases.
+
+**Example:**
+```python
+context = "France is a country in Europe."
+question = "What is the capital of France?"
+prompt = f"Background:\n{context}\nQuestion: {question}\nAnswer:"
+```
+
+## How to Run and Choose a Provider
+
+Prompter makes it easy to switch between LLM providers. All providers have a unified interface:
+
+```python
+from prompter.providers import OpenAIService, LocalLLMService
+
+# Choose a provider (just change the class to switch)
 service = OpenAIService(api_key="sk-...", model="gpt-4")
-response = service.generate("What is the capital of France?")
-print(response)  # "Paris"
+# or
+# service = LocalLLMService(endpoint_url="http://localhost:8000/generate", model="llama-3")
+
+response = service.generate(prompt)
+print(response)
+```
+
+## Defining Output Python Objects (Structured Output)
+
+You can ask any provider to return a structured response matching a Python dataclass or type. Just pass the `result_object` parameter:
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Answer:
+    answer: str
+    confidence: float
+
+response = service.generate(prompt, result_object=Answer)
+print(response.answer, response.confidence)
 ```
 
 ## Extending
