@@ -66,15 +66,29 @@ response = service.generate(prompt)
 print(response)
 ```
 
+
 ## Defining Output Python Objects (Structured Output)
 
-You can ask any provider to return a structured response matching a Python dataclass or type. Just pass the `result_object` parameter:
+You can ask any provider to return a structured response matching a Python dataclass or Pydantic model. Just pass the `result_object` parameter:
 
+**With a dataclass:**
 ```python
 from dataclasses import dataclass
 
 @dataclass
 class Answer:
+    answer: str
+    confidence: float
+
+response = service.generate(prompt, result_object=Answer)
+print(response.answer, response.confidence)
+```
+
+**With a Pydantic model:**
+```python
+from pydantic import BaseModel
+
+class Answer(BaseModel):
     answer: str
     confidence: float
 
