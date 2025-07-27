@@ -1,6 +1,10 @@
 
 
+
 # Prompter: Extensible LLM Provider System
+
+**[→ Community Packs: Domain-Specific Templates & Schemas](PACKS.md)**  
+**[→ Contributor Guide](CONTRIBUTING.md)**
 
 ## Installation
 
