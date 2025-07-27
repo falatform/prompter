@@ -1,3 +1,0 @@
-Text to Summarize:
-{{text}}
-Instruction: Summarize the above text in {{summary_length}} sentences.
