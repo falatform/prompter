@@ -15,13 +15,31 @@ def replacer(match, context):
         return value(**kwargs)
     return str(value) if value is not None else match.group(0)
 
+
+import importlib.resources
+import requests
+import os
+
 class PromptTemplateProcessor:
-    def __init__(self, template_path: str):
-        try:
-            with open(template_path, 'r', encoding='utf-8') as f:
+    def __init__(self, template_name: str, package: str = None, url: str = None):
+        """
+        Load a template from a file path, package resource, or URL.
+        - template_name: The template file name or path.
+        - package: If provided, loads from the given package using importlib.resources.
+        - url: If provided, downloads the template from the given URL.
+        """
+        if url:
+            response = requests.get(url)
+            response.raise_for_status()
+            self.template = response.text
+        elif package:
+            with importlib.resources.open_text(package, template_name) as f:
                 self.template = f.read()
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Prompt template file not found: '{template_path}'. Please check the path and try again.")
+        else:
+            if not os.path.isfile(template_name):
+                raise FileNotFoundError(f"Prompt template file not found: '{template_name}'. Please check the path and try again.")
+            with open(template_name, 'r', encoding='utf-8') as f:
+                self.template = f.read()
 
     def render(self, context: Dict[str, Union[str, Callable[[], str]]]) -> str:
         rendered = re.sub(r'{{\s*(\w+)\s*}}', lambda m: replacer(m, context), self.template)

@@ -11,8 +11,7 @@ readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}
 dependencies = [
-    # Add your runtime dependencies here, e.g.:
-    # "requests"
+    "requests"
 ]
 
 [project.urls]

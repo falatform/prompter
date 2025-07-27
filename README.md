@@ -1,5 +1,14 @@
 
+
 # Prompter: Extensible LLM Provider System
+
+## Installation
+
+Install from PyPI:
+
+```bash
+pip install falat-prompter
+```
 
 Prompter is a flexible, plugin-style Python framework for working with multiple Large Language Model (LLM) providers. It supports dynamic provider loading, robust error handling, and unified response parsing, making it easy to integrate, extend, and use in any open source or production environment.
 
