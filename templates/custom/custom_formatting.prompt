@@ -1,0 +1,6 @@
+[START CONTEXT]
+{{context}}
+[END CONTEXT]
+[START INSTRUCTION]
+{{instruction}}
+[END INSTRUCTION]

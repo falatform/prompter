@@ -1,0 +1,5 @@
+Persona: {{persona}}
+Conversation History:
+{{history}}
+User: {{user_input}}
+Bot:
